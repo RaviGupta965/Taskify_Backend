@@ -1,4 +1,4 @@
-import Activity from '../models/activity.schema'
+import Activity from '../models/activity.schema.js'
 
 const logActivity = async ({ action, userId, taskId, projectId, details }) => {
   try {
