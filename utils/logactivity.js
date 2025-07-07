@@ -1,4 +1,4 @@
-export const logActivity = async ({ action, userId, taskId, projectId, details }) => {
+export default logActivity = async ({ action, userId, taskId, projectId, details }) => {
   try {
     await Activity.create({
       action,
