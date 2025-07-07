@@ -1,4 +1,6 @@
-export default logActivity = async ({ action, userId, taskId, projectId, details }) => {
+import Activity from '../models/activity.schema'
+
+const logActivity = async ({ action, userId, taskId, projectId, details }) => {
   try {
     await Activity.create({
       action,
@@ -11,3 +13,4 @@ export default logActivity = async ({ action, userId, taskId, projectId, details
     console.error("❌ Failed to log activity:", err.message);
   }
 };
+export default logActivity;
