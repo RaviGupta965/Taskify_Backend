@@ -1,3 +1,3 @@
-import { smartAssign } from "../controllers/task.controller.js";
+import { smartAssign } from "../controllers/Assign.controller.js";
 
 router.post("/:taskId/smart-assign", authMiddleware, smartAssign);
