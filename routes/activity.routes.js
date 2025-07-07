@@ -4,6 +4,6 @@ import { authenticate } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.get("/:projectId", authMiddleware, getRecentActivity);
+router.get("/:projectId", authenticate, getRecentActivity);
 
 export default router;
