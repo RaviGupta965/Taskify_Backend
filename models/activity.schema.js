@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const activitySchema = new mongoose.Schema({
   action: { type: String, required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -6,3 +8,5 @@ const activitySchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now },
   details: String
 });
+
+export default mongoose.model("Activity", activitySchema);
