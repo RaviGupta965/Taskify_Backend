@@ -6,7 +6,6 @@ export const createTask = async (req, res) => {
     await connectDB();
     const { title, description, status, priority, assignedTo, projectId } =
       req.body;
-
     // Ensure required fields
     if (!title || !projectId || !status) {
       return res
@@ -52,10 +51,10 @@ export const getProjectTasks = async (req, res) => {
     const { projectId } = req.params;
     const tasks = await Task.find({ projectId }).populate(
       "assignedTo",
-      "username email"
+      "username"
     );
-    await mongoose.disconnect();
     res.status(200).json(tasks);
+    await mongoose.disconnect();
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
