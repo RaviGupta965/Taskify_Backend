@@ -2,7 +2,6 @@ import Project from "../models/project.schema.js";
 import User from "../models/user.schema.js";
 import connectDB from "../utils/DB_connect.js";
 export const createProject = async (req, res) => {
-
   try {
     await connectDB()
     const { name } = req.body;
@@ -62,3 +61,24 @@ export const getUserProjects = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
+export const getBoardMembers = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await connectDB();
+    const project = await Project.findById(id);
+    if (!project) {
+      return res.status(404).json({ error: 'Board not found' });
+    }
+    const members = await User.find(
+      { _id: { $in: project.members } },
+      'username email _id' // only select specific fields
+    );
+
+    res.json(members);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch board members' });
+  }
+};
+
