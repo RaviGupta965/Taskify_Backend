@@ -69,7 +69,6 @@ export const updateTask = async (req, res) => {
 
     const currentTask = await Task.findById(taskId);
     if (!currentTask) return res.status(404).json({ error: "Task not found" });
-
     // Conflict detection
     if (clientUpdate.version !== currentTask.version) {
       return res.status(409).json({
@@ -86,7 +85,6 @@ export const updateTask = async (req, res) => {
       updatedAt: Date.now(),
       version: currentTask.version + 1
     };
-
     const updated = await Task.findByIdAndUpdate(taskId, updates, { new: true });
 
     await logActivity({
