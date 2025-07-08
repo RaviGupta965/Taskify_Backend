@@ -15,7 +15,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://taskify-frontend-sooty.vercel.app/", 
+    origin: "https://taskify-frontend-sooty.vercel.app", 
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
