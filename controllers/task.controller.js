@@ -1,6 +1,7 @@
 import Task from "../models/task.schema.js";
 import connectDB from "../utils/DB_connect.js";
 import logActivity from '../utils/logactivity.js'
+import mongoose from "mongoose";
 export const createTask = async (req, res) => {
   try {
     await connectDB();

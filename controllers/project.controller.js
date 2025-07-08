@@ -1,6 +1,7 @@
 import Project from "../models/project.schema.js";
 import User from "../models/user.schema.js";
 import connectDB from "../utils/DB_connect.js";
+import mongoose from "mongoose";
 export const createProject = async (req, res) => {
   try {
     await connectDB()
@@ -16,7 +17,7 @@ export const createProject = async (req, res) => {
     await User.findByIdAndUpdate(userId, {
       $push: { joinedProjects: project._id }
     });
-
+    await mongoose.disconnect()
     res.status(201).json(project);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -44,7 +45,7 @@ export const inviteMember = async (req, res) => {
 
     user.joinedProjects.push(project._id);
     await user.save();
-
+    await mongoose.disconnect()
     res.status(200).json({ message: "User added to project" });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -56,6 +57,7 @@ export const getUserProjects = async (req, res) => {
     await connectDB()
     const userId = req.user.id;
     const projects = await Project.find({ members: userId }).populate("members", "username email");
+    await mongoose.disconnect()
     res.status(200).json(projects);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -74,7 +76,7 @@ export const getBoardMembers = async (req, res) => {
       { _id: { $in: project.members } },
       'username email _id' // only select specific fields
     );
-
+    await mongoose.disconnect()
     res.json(members);
   } catch (err) {
     console.error(err);

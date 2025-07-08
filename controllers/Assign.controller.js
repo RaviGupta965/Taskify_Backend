@@ -1,52 +1,39 @@
-import User from "../models/user.schema.js";
+import mongoose from "mongoose";
+import Task from '../models/task.schema.js'
+import Project from '../models/project.schema.js'
+import connectDB from "../utils/DB_connect.js";
 
-export const smartAssign = async (req, res) => {
+export const smartAssignTask = async (req, res) => {
   try {
     await connectDB();
-    const { taskId } = req.params;
+    const { title, description, priority, status, projectId } = req.body;
 
-    const task = await Task.findById(taskId);
-    if (!task) return res.status(404).json({ error: "Task not found" });
-
-    const { projectId } = task;
-
-    // Step 1: Get project members
-    const project = await Project.findById(projectId).populate("members");
+    // Find all members of the project
+    const project = await Project.findById(projectId).populate("members", "_id username");
     if (!project) return res.status(404).json({ error: "Project not found" });
 
-    const members = project.members;
-
-    if (!members.length) return res.status(400).json({ error: "No members in this project" });
-
-    // Step 2: Count active tasks for each member
-    const memberTasks = await Promise.all(
-      members.map(async (member) => {
-        const count = await Task.countDocuments({
-          assignedTo: member._id,
-          projectId,
-          status: { $ne: "Done" }
-        });
-        return { user: member, count };
+    // Count current tasks for each member
+    const taskCounts = await Promise.all(
+      project.members.map(async (member) => {
+        const count = await Task.countDocuments({ assignedTo: member._id });
+        return { userId: member._id, count };
       })
     );
 
-    // Step 3: Find member with least active tasks
-    const leastBusy = memberTasks.sort((a, b) => a.count - b.count)[0];
+    // Find member with least tasks
+    const leastBusy = taskCounts.reduce((a, b) => (a.count < b.count ? a : b));
 
-    // Step 4: Assign task
-    task.assignedTo = leastBusy.user._id;
-    await task.save();
-
-    await logActivity({
-      action: "smart-assigned",
-      userId: req.user.id,
-      taskId: task._id,
-      projectId: task.projectId,
-      details: `Smart assigned to ${leastBusy.user.username}`
+    const newTask = await Task.create({
+      title,
+      description,
+      priority,
+      status,
+      projectId,
+      assignedTo: leastBusy.userId,
     });
-
-    res.status(200).json({ message: `Task assigned to ${leastBusy.user.username}`, task });
+    mongoose.disconnect();
+    res.status(201).json(newTask);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
