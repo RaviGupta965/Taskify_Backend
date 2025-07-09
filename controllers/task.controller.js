@@ -50,15 +50,15 @@ export const getProjectTasks = async (req, res) => {
   try {
     await connectDB();
     const { projectId } = req.params;
-    console.log(projectId);
-    const tasks = await Task.find({ projectId }).populate(
-      "assignedTo",
-      "username"
-    );
+
+    const tasks = await Task.find({ projectId }).populate("assignedTo", "username");
+
     res.status(200).json(tasks);
-    await mongoose.disconnect();
   } catch (err) {
-    res.status(400).json({ error: err });
+    console.error("Error in getProjectTasks:", err.message);
+    res.status(400).json({ error: err.message });
+  } finally {
+    await mongoose.disconnect(); 
   }
 };
 
