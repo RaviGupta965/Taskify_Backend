@@ -50,6 +50,7 @@ export const getProjectTasks = async (req, res) => {
   try {
     await connectDB();
     const { projectId } = req.params;
+    console.log(projectId);
     const tasks = await Task.find({ projectId }).populate(
       "assignedTo",
       "username"
