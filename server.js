@@ -15,7 +15,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://taskify-frontend-sooty.vercel.app", 
+    origin: "https://taskify-frontend-sooty.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
@@ -33,9 +33,9 @@ io.on("connection", (socket) => {
     console.log(` ${socket.id} left room: ${projectId}`);
   });
 
-  socket.on("taskUpdated", ({ projectId, task }) => {
-    socket.to(projectId).emit("taskUpdated", task);
-    console.log(` Emitting taskUpdated to room: ${projectId}`);
+  socket.on("task-change", (projectId) => {
+    socket.to(projectId).emit("task-updated");
+    console.log(`Emitting 'task-updated' to room: ${projectId}`);
   });
 
   socket.on("disconnect", () => {
