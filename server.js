@@ -21,20 +21,25 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("New client connected");
+  console.log("Socket connected:", socket.id);
 
   socket.on("joinProject", (projectId) => {
     socket.join(projectId);
-    console.log(`User joined project room: ${projectId}`);
+    console.log(`${socket.id} joined room: ${projectId}`);
   });
 
   socket.on("leaveProject", (projectId) => {
     socket.leave(projectId);
-    console.log(`User left project room: ${projectId}`);
+    console.log(` ${socket.id} left room: ${projectId}`);
+  });
+
+  socket.on("taskUpdated", ({ projectId, task }) => {
+    socket.to(projectId).emit("taskUpdated", task);
+    console.log(` Emitting taskUpdated to room: ${projectId}`);
   });
 
   socket.on("disconnect", () => {
-    console.log("Client disconnected");
+    console.log(" Disconnected:", socket.id);
   });
 });
 
@@ -57,25 +62,6 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/smart", smartRoutes);
-
-io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
-
-  // Join a project room
-  socket.on("joinProject", (projectId) => {
-    socket.join(projectId);
-    console.log(`🛠️ Socket ${socket.id} joined project ${projectId}`);
-  });
-
-  // Emit changes to all users in the same project
-  socket.on("taskUpdated", ({ projectId, task }) => {
-    socket.to(projectId).emit("taskUpdated", task);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
-  });
-});
 
 server.listen(process.env.PORT, () => {
   console.log(`server is listening at PORT: ${process.env.PORT}`);
