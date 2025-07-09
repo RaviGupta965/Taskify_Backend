@@ -47,8 +47,8 @@ app.set("io", io); // Store io instance globally
 app.use(injectSocket);
 app.use(
   cors({
-    origin: "https://taskify-frontend-sooty.vercel.app", // ✅ match exactly
-    credentials: true, // optional if you're ever using cookies
+    origin: "https://taskify-frontend-sooty.vercel.app",
+    credentials: true,
   })
 );
 app.use(express.json());

@@ -56,11 +56,12 @@ export const getUserProjects = async (req, res) => {
   try {
     await connectDB()
     const userId = req.user.id;
+    console.log(userId)
     const projects = await Project.find({ members: userId }).populate("members", "username email");
     await mongoose.disconnect()
     res.status(200).json(projects);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: err });
   }
 };
 
