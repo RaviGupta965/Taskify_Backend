@@ -57,8 +57,6 @@ export const getProjectTasks = async (req, res) => {
   } catch (err) {
     console.error("Error in getProjectTasks:", err.message);
     res.status(400).json({ error: err.message });
-  } finally {
-    await mongoose.disconnect(); 
   }
 };
 
