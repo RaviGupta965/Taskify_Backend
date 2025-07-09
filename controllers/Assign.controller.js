@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import Task from "../models/task.schema.js";
 import Project from "../models/project.schema.js";
 import connectDB from "../utils/DB_connect.js";

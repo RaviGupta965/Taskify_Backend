@@ -1,5 +1,4 @@
 import connectDB from "../utils/DB_connect.js";
-import mongoose from "mongoose";
 import Activity from "../models/activity.schema.js";
 
 export const getRecentActivity = async (req, res) => {

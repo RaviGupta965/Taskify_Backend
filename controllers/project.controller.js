@@ -1,7 +1,6 @@
 import Project from "../models/project.schema.js";
 import User from "../models/user.schema.js";
 import connectDB from "../utils/DB_connect.js";
-import mongoose from "mongoose";
 export const createProject = async (req, res) => {
   try {
     await connectDB()
@@ -54,7 +53,6 @@ export const getUserProjects = async (req, res) => {
   try {
     await connectDB()
     const userId = req.user.id;
-    console.log(userId)
     const projects = await Project.find({ members: userId }).populate("members", "username email");
     res.status(200).json(projects);
   } catch (err) {

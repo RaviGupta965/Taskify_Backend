@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/user.schema.js";
 import connectDB from "../utils/DB_connect.js";
-import mongoose from "mongoose";
 
 // POST /api/auth/register
 export const register = async (req, res) => {
