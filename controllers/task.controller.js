@@ -70,6 +70,8 @@ export const updateTask = async (req, res) => {
 
     const currentTask = await Task.findById(taskId);
     if (!currentTask) return res.status(404).json({ error: "Task not found" });
+
+    const statusChanged = clientUpdate.status && clientUpdate.status !== currentTask.status;
     // Conflict detection
     if (clientUpdate.version !== currentTask.version) {
       return res.status(409).json({
@@ -86,14 +88,19 @@ export const updateTask = async (req, res) => {
       updatedAt: Date.now(),
       version: currentTask.version + 1
     };
+
     const updated = await Task.findByIdAndUpdate(taskId, updates, { new: true });
+    // Log movement or general update
+    const details = statusChanged
+      ? `Moved task "${updated.title}" from ${currentTask.status} to ${updated.status}`
+      : `Updated task "${updated.title}" in ${updated.status}`;
 
     await logActivity({
       action: "updated",
       userId: req.user.id,
       taskId: updated._id,
       projectId: updated.projectId,
-      details: `Updated task "${updated.title}" in ${updated.status}`,
+      details,
     });
     req.io.to(updated.projectId.toString()).emit("taskUpdated", updated);
     await mongoose.disconnect();
@@ -108,7 +115,7 @@ export const deleteTask = async (req, res) => {
   try {
     await connectDB();
     const { taskId } = req.params;
-    await Task.findByIdAndDelete(taskId);
+    const task=await Task.findByIdAndDelete(taskId);
     await logActivity({
       action: "deleted",
       userId: req.user.id,
