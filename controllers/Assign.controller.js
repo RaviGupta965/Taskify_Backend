@@ -42,7 +42,6 @@ export const smartAssignTask = async (req, res) => {
       projectId: task.projectId,
       details: `Smart assigned task "${task.title}" to user with ID ${leastBusy.userId}`,
     });
-    mongoose.disconnect();
     res.status(201).json(task);
   } catch (err) {
     res.status(500).json({ error: err.message });

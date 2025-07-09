@@ -37,7 +37,6 @@ export const createTask = async (req, res) => {
       projectId: task.projectId,
       details: `Created task "${task.title}" in ${task.status}`,
     });
-    await mongoose.disconnect();
     req.io.to(projectId).emit("taskCreated", task);
     res.status(201).json(task);
   } catch (err) {
@@ -102,7 +101,6 @@ export const updateTask = async (req, res) => {
       details,
     });
     req.io.to(updated.projectId.toString()).emit("taskUpdated", updated);
-    await mongoose.disconnect();
     res.status(200).json({ conflict: false, task: updated });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -123,7 +121,6 @@ export const deleteTask = async (req, res) => {
       details: `Deleted task "${task.title}" from ${task.status}`,
     });
     req.io.to(task.projectId.toString()).emit("taskDeleted", taskId);
-    await mongoose.disconnect();
     res.status(200).json({ message: "Task deleted" });
   } catch (err) {
     res.status(400).json({ error: err.message });

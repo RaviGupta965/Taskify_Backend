@@ -20,7 +20,5 @@ export const getRecentActivity = async (req, res) => {
   } catch (err) {
     console.error("Error in getRecentActivity:", err);
     res.status(500).json({ error: err.message });
-  } finally {
-    await mongoose.disconnect();
   }
 };
