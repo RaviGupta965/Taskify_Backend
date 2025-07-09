@@ -57,7 +57,7 @@ export const getProjectTasks = async (req, res) => {
     res.status(200).json(tasks);
     await mongoose.disconnect();
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(400).json({ error: err });
   }
 };
 
@@ -115,7 +115,7 @@ export const deleteTask = async (req, res) => {
   try {
     await connectDB();
     const { taskId } = req.params;
-    const task=await Task.findByIdAndDelete(taskId);
+    const task = await Task.findByIdAndDelete(taskId);
     await logActivity({
       action: "deleted",
       userId: req.user.id,
